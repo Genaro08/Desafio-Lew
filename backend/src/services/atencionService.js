@@ -1,7 +1,6 @@
 class AtencionService {
   /**
    * Calcula la prioridad de atención aplicando las reglas de negocio de Orbital.
-   * Reemplaza exactamente el método Java legacy.
    * 
    * @param {number} calificacionCliente - Número entero entre 1 y 5.
    * @param {boolean} esUrgente - Booleano que indica urgencia.
@@ -11,8 +10,7 @@ class AtencionService {
   calcularPrioridad(calificacionCliente, esUrgente, tipoCliente) {
     let factor = 1.0;
 
-    // Emulación exacta de `equalsIgnoreCase` de Java
-    const tipoUpper = typeof tipoCliente === 'string' ? tipoCliente.toUpperCase() : '';
+    const tipoUpper = tipoCliente.toUpperCase();
 
     // Regla de Negocio Corregida:
     // VIP multiplica por 1.5.
