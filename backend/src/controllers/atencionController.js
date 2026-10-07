@@ -2,34 +2,28 @@ const atencionService = require('../services/atencionService');
 
 class AtencionController {
   /**
-   * Endpoint para crear y registrar una atención.
+   * Endpoint HTTP para registrar una nueva atención.
    */
   crearAtencion = async (req, res) => {
     try {
       const { calificacionCliente, esUrgente, tipoCliente } = req.body;
 
-      // Calculamos la prioridad de atención utilizando el servicio
-      const prioridadCalculada = atencionService.calcularPrioridad(
+      // Delegamos el caso de uso completo (cálculo + guardado) al servicio
+      const resultado = await atencionService.crearAtencion({
         calificacionCliente,
         esUrgente,
-        tipoCliente
-      );
+        tipoCliente,
+      });
 
       return res.status(201).json({
         status: 'success',
         mensaje: 'Atención registrada correctamente',
-        data: {
-          calificacionCliente,
-          esUrgente,
-          tipoCliente,
-          prioridadCalculada,
-        },
+        data: resultado,
       });
     } catch (error) {
       return res.status(500).json({
         status: 'error',
         mensaje: 'Error interno al registrar la atención',
-        error: error.message,
       });
     }
   };

@@ -1,3 +1,5 @@
+const atencionModel = require('../models/atencionModel');
+
 class AtencionService {
   /**
    * Calcula la prioridad de atención aplicando las reglas de negocio de Orbital.
@@ -10,11 +12,8 @@ class AtencionService {
   calcularPrioridad(calificacionCliente, esUrgente, tipoCliente) {
     let factor = 1.0;
 
-    const tipoUpper = tipoCliente.toUpperCase();
+    const tipoUpper = typeof tipoCliente === 'string' ? tipoCliente.toUpperCase() : '';
 
-    // Regla de Negocio Corregida:
-    // VIP multiplica por 1.5.
-    // CORPORATIVO solo multiplica por 1.2 si la calificación es >= 3.
     if (tipoUpper === 'VIP') {
       factor = 1.5;
     } else if (tipoUpper === 'CORPORATIVO' && calificacionCliente >= 3) {
@@ -28,6 +27,34 @@ class AtencionService {
     }
 
     return Math.min(prioridad, 10.0);
+  }
+
+  /**
+   * Ejecuta el caso de uso completo: calcula la prioridad y persiste en MySQL.
+   * 
+   * @param {object} datos - { calificacionCliente, esUrgente, tipoCliente }
+   * @returns {Promise<object>} Objeto con id y prioridad.
+   */
+  async crearAtencion({ calificacionCliente, esUrgente, tipoCliente }) {
+    // 1. Lógica de negocio: calcular prioridad
+    const prioridadCalculada = this.calcularPrioridad(
+      calificacionCliente,
+      esUrgente,
+      tipoCliente
+    );
+
+    // 2. Persistencia: llamar al modelo para guardar en DB
+    const idAtencion = await atencionModel.crearAtencion({
+      calificacionCliente,
+      esUrgente,
+      tipoCliente,
+      prioridadCalculada,
+    });
+
+    return {
+      id: idAtencion,
+      prioridad: prioridadCalculada,
+    };
   }
 }
 
