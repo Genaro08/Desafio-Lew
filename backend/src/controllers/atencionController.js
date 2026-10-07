@@ -9,7 +9,7 @@ class AtencionController {
       const { calificacionCliente, esUrgente, tipoCliente } = req.body;
 
       // Delegamos el caso de uso completo (cálculo + guardado) al servicio
-      const resultado = await atencionService.crearAtencion({
+      await atencionService.crearAtencion({
         calificacionCliente,
         esUrgente,
         tipoCliente,
@@ -18,7 +18,6 @@ class AtencionController {
       return res.status(201).json({
         status: 'success',
         mensaje: 'Atención registrada correctamente',
-        data: resultado,
       });
     } catch (error) {
       return res.status(500).json({
